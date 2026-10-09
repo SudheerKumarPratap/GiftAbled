@@ -1,1 +1,6 @@
-
+Library_Name,Book_Title,Author_Name,ISBN,Status
+Local_Lib, The secret of Cryptography,Milan George,97805246695213,Available
+Central_Lib, Uses of AI in Industry,Albert Lee,9780214523698,Checked out
+District_Lib,Literature of Hindi,Dr.Hemlata Sharma,97801478956233,Checked out
+Subhash Chandra Bosh_lib,Privacy of Coding,Dr.J.R.Roww,09780256325412,Available
+  
