@@ -1,95 +1,93 @@
-class Book:
-    """Represents a unique  book title in the system."""
-    def __init__(self,title,author,copies):
-      
-        self.title=title
-        self.author= author
-        self.__copies= copies
+import csv
 
-        self.__total_copies= copies
-        
-    @property    
-    def copies(self):
-        return self.__copies
-    @copies.setter    
-    def copies(self,values):
-        if 00<=  values >=self.__total_copies:
-            self.__copies = values
-    def add_more_copies(self,ount):
-        self.__copies+=count
-        self.__total_copies +=  count
-    def is_loaned_out(self):
-        return self.__copies < self.__total_copies
-        
-    def __str__(self):
-        return f"'{self.title}' by'{self.author}'(copies Available : {self.__copies}/{self.__total_copies}"    
-        
+def load_and_search_library():
+    file_name= "Library.csv"
+    books_data = []
+    try:
 
-class Library:
-    """Represents a specific Library branches that manages it  s  own physical inventory."""    
-    
-    def __init__(self):
-        self.books= {}
+        with open(file_name,'r',newline='',encoding='utf-8')as file:
+            reader=csv.DictReader(file)
+            for row  in reader:
+                books_data.append(row)
+    except FileNotFoundError:
+        print(f" eerror:{file_name} is not found.") 
+        return
         
-       
-    def add_book(self,title,author,copies):
-        title= title.strip()
-        if title in self.books:
-            self.books[title].copies += copies
-            print(f"updaated: added {copies} more copies to {title}")
-        else:
-            new_book=Book(title,author,copies)
-            self.books[title] = new_book
-            print(f"Success new entry  created for {title}")
-       
-           
-    def show_all_book(self):
-        
-        if not self.books:
-            print("there are no book available in this library")
-            return 
-        print("\n --- library Catalog---")   
-        for book in self.books.values() :
-            print(f"book_Details:{book}")
-        #print("-" *40)
-    def borrow_book(self,title):
-        title = title.strip()
-        if title not in self.books:
-            print(f" Error:{title}'is not in the Library system")
-            return 
+    while True :
+        print("\n---------------------------------------------------------")
+        print("1.Library Search system")
+        print("2.list of Multiple Libraries and Books---")
+        print("3.Search books with the name of Library----")
+        print("4.Exit")
+        print("-----------------------------------------------------------")
+        choice = input("select option:1-4").strip()
+        if choice == '1':
+            print(f"\n {'Library_Name'}|{'Book Title':<25}|{'Author':<20}|{'Status':<12}")
+            print(" -" *60)
+            #print(f"\n {book['Library_Name']:<20}|{book['Book Title']:<25}|{book['Author']:<20}|{book['Status']:<12}")
+            for book in books_data:
+                lib_name = book.get('Library_Name') or book.get('Library Name') or ""
+                b_title = book.get('Book_Title') or book.get('Book Title') or ""
+                b_author = book.get('Author') or ""
+                b_status = book.get('Status') or ""
+                print(f"{lib_name:<20} | {b_title:<25} | {b_author:<20} | {b_status:<12}")
+
+        # Option-2: see list of books related to the particular library
+        elif choice == '2':
+            search_lib =input("write Library_name:").strip().lower()
+            print(f"\n -- result for library: '{search_lib}'---")
+            print(f" {'Book Title':<25}|{'Author':<20}|{'Status':<12}")
+            print("_" *60)
+            found = False
             
-        book = self.books[title]
-        if book.copies >0:
-            book.copies-=1
-            print("\n---- Borrowing_Details---")
-            print(f"Successs: you borrowed {title} (remaining books : {book.copies})")
-        else:
-            print(f"No copies of {title} are currently  Aailable")
+            for book in books_data:
+                lib_name = str(book.get('Library_Name') or book.get('Library Name') or "").lower()
+                if search_lib in lib_name:
+                    b_title = book.get('Book_Title') or book.get('Book Title') or ""
+                    b_author = book.get('Author') or ""
+                    b_status = book.get('Status') or ""
+                    print(f"{b_title:<25} | {b_author:<20} | {b_status:<12}")
+                    found = True
+                
+            if not found :
+                print(" There is no data related to the Library got")
+
+
+        elif choice == '3':
+            search_query = input("Write Name of Book or Author:").strip().lower()
+            print(f"\n--- Search Results for: '{search_query}' ---")
+            print(f"{'Library Name':<20} | {'Book Title':<25} | {'Author':<20} | {'Status':<12}")
+            print("-" * 60)
+            found = False
+            for book in books_data:
+                # str(book.get(...) or "") NoneType_error will be rectified
+                title = str(book.get('Book_Title') or book.get('Book Title') or "").lower()
+                author = str(book.get('Author') or "").lower()
+                if search_query in title or search_query in author:
+                    lib_name = book.get('Library_Name') or book.get('Library Name') or ""
+                    b_title = book.get('Book_Title') or book.get('Book Title') or ""
+                    b_author = book.get('Author') or ""
+                    b_status = book.get('Status') or ""
+                    print(f"{lib_name:<20} | {b_title:<25} | {b_author:<20} | {b_status:<12}")
+                    found = True
+                           
+            if  not found :
+                print("There  is no Book or Author got.")
+                
+        elif choice =='4':
+            print("\n Thanks for using of Library System..")
+            break
+        else :
+            print("Option is wrong,Please select option betweeen 1 to 4")
+
+if __name__== "__main__": 
+
+    load_and_search_library()
             
-    def return_book(self,title):
-          title = title.strip()
-          if title not in self.books:
-            print(f" Error:{title}'does not belong to this Library")
-            return
-              
-          book = self.books[title]
-          if book.is_loaned_out():
-             book.copies+= 1
-             print(f"Success, thank you for returning book {title}")
-
-          else :
-              print(f"Refuesd: All copies of {title} are already on the shelves. Nothing out of loan.")
-          
-if __name__ == "__main__" :
-    b=Book("Applied crypto Science","Dr.Mahesh kumar",26)
-    l = Library()
-    l.add_book("Secret Cryptography","Rajkumar",120)
-    l.add_book("Applied crypto Science","Dr.Mahesh kumar",26)
-    l.add_book("An intro to  AI","smt. Nidhi",425)
-    l.show_all_book()
-    l.borrow_book("Applied crypto Science")
-    l.borrow_book("Applied crypto Science")
-    l.borrow_book("Secret Cryptography")
-    l.show_all_book()
-    l.return_book("Secret Cryptography")
-
+        
+            
+                    
+        
+            
+             
+   
